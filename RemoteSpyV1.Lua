@@ -413,6 +413,8 @@ Namecall = hookmetamethod(game, "__namecall", newcclosure(function(self, ...)
     return Namecall(self, ...)
 end))
 
+local ClipBoardFunction = setclipboard or toclipboard or set_clipboard or (Clipboard and Clipboard.set)
+
 local Buttons = {
 	[1] = {"Run", function()
 		if CurrentCode then
@@ -426,7 +428,9 @@ local Buttons = {
 	end},
 	[2] = {"Copy", function()
 		if CurrentCode then
-			print(CurrentCode)
+			if ClipBoardFunction then
+				ClipBoardFunction(CurrentCode)
+			end
 		end
 	end}
 }
