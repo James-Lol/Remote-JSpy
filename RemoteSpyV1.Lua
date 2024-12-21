@@ -429,7 +429,7 @@ local Buttons = {
 	[2] = {"Copy", function()
 		if CurrentCode then
 			if ClipBoardFunction then
-				ClipBoardFunction(CurrentCode)
+				ClipBoardFunction(tostring(CurrentCode))
 			end
 		end
 	end}
