@@ -35,9 +35,6 @@ ChannelsFrame.Position = UDim2.new(0.03, 0, 0.04, 0)
 ChannelsFrame.Size = UDim2.new(0.14, 0, 0.92, 0)
 ChannelsFrame.Name = "Channels"
 
-local UIPadding = Instance.new("UIPadding")
-UIPadding.PaddingRight = UDim.new(0, 10)
-
 local UIListLayout = Instance.new("UIListLayout")
 UIListLayout.Padding = UDim.new(0, 5)
 UIListLayout.SortOrder = Enum.SortOrder.LayoutOrder
@@ -61,7 +58,7 @@ RemoteCode.TextColor = BrickColor.new("Institutional white")
 RemoteCode.TextColor3 = Color3.fromRGB(255, 255, 255)
 RemoteCode.TextEditable = false
 RemoteCode.TextSize = 12
-RemoteCode.TextWrapped = true
+RemoteCode.TextWrapped = false
 RemoteCode.TextXAlignment = Enum.TextXAlignment.Left
 RemoteCode.TextYAlignment = Enum.TextYAlignment.Top
 RemoteCode.BackgroundColor3 = Color3.fromRGB(53, 53, 54)
@@ -108,7 +105,6 @@ RemoteText.BorderColor3 = Color3.fromRGB(0, 0, 0)
 RemoteText.BorderSizePixel = 0
 RemoteText.Position = UDim2.new(0, 0, 0.85, 0)
 RemoteText.Size = UDim2.new(1, 0, 0.15, 0)
-RemoteText.Transparency = 1
 RemoteText.Name = "RemoteText"
 
 local Remotes = Instance.new("ScrollingFrame")
@@ -127,9 +123,6 @@ Remotes.Position = UDim2.new(0.19, 0, 0.04, 0)
 Remotes.Size = UDim2.new(0.14, 0, 0.92, 0)
 Remotes.Name = "Remotes"
 
-local UIPadding_2 = Instance.new("UIPadding")
-UIPadding_2.PaddingRight = UDim.new(0, 10)
-
 local UIListLayout_3 = Instance.new("UIListLayout")
 UIListLayout_3.Padding = UDim.new(0, 5)
 UIListLayout_3.SortOrder = Enum.SortOrder.LayoutOrder
@@ -138,7 +131,6 @@ ScreenGui.Parent = game:GetService("Players").LocalPlayer.PlayerGui
 MainFrame.Parent = ScreenGui
 UICorner.Parent = MainFrame
 ChannelsFrame.Parent = MainFrame
-UIPadding.Parent = ChannelsFrame
 UIListLayout.Parent = ChannelsFrame
 RemoteInfo.Parent = MainFrame
 RemoteCode.Parent = RemoteInfo
@@ -146,7 +138,6 @@ ButtonsFrame.Parent = RemoteInfo
 UIListLayout_2.Parent = ButtonsFrame
 RemoteText.Parent = RemoteInfo
 Remotes.Parent = MainFrame
-UIPadding_2.Parent = Remotes
 UIListLayout_3.Parent = Remotes
 
 DragModule.New(MainFrame):Enable()
