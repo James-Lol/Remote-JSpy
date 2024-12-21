@@ -172,14 +172,9 @@ local function TemplateButton(Type, ButtonParent, ButtonText)
 		local UIPaddingTemplate = Instance.new("UIPadding")
 		UIPaddingTemplate.PaddingLeft = UDim.new(0.1, 0)
 
-		local UIAspectRatioConstraintTemplate = Instance.new("UIAspectRatioConstraint")
-		UIAspectRatioConstraintTemplate.AspectRatio = 2.78
-
 		Template.Parent = ButtonParent
 		LabelTemplate.Parent = Template
 		UIPaddingTemplate.Parent = LabelTemplate
-		UIAspectRatioConstraintTemplate.Parent = Template
-
 		return Template
 	else
 		local Template = Instance.new("TextButton")
