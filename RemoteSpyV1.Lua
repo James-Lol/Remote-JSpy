@@ -1,4 +1,4 @@
-local DragModule = loadstring(game:HttpGet(""))()
+local DragModule = loadstring(game:HttpGet("https://raw.githubusercontent.com/James-Lol/Remote-JSpy/refs/heads/main/DragModule.Lua"))()
 local Channels = {}
 local CurrentRemote = nil
 local CurrentCode = nil
