@@ -436,18 +436,15 @@ function TableToString(Tbl, Indent)
     local Result = "{\n"
     local MaxIndex = GetMaxIndex(Tbl)
     
-    -- Handle sequential indices
     for I = 1, MaxIndex do
         Result = Result .. Indent .. "    [" .. I .. "] = "
         Result = Result .. FormatValue(Tbl[I], Indent .. "    ") .. ",\n"
     end
     
-    -- Handle non-sequential indices
     for Index, Value in pairs(Tbl) do
         if type(Index) ~= "number" or Index > MaxIndex then
             Result = Result .. Indent .. "    "
             
-            -- Format the index
             if type(Index) == "number" then
                 Result = Result .. "[" .. Index .. "]"
             else
@@ -471,22 +468,46 @@ local function IsService(Object)
 end
 
 local function NeedsWrapping(str)
-    if string.match(str, "^%d") then
+    if string.match(str, "^%d") or 
+       string.match(str, "[^%w]") or 
+       string.match(str, "_") then
         return true
     end
-    
-    if string.match(str, "[^%w]") or string.match(str, "_") then
-        return true
-    end
-    
     return false
 end
 
 local function WrapName(name)
     if NeedsWrapping(name) then
-        return string.format('[""%s""]', name)
+        return string.format('["%s"]', name:gsub('"', '\\"'))
     end
     return name
+end
+
+local function GetIndexInParent(obj)
+    if not obj or not obj.Parent then return nil end
+    
+    local siblings = obj.Parent:GetChildren()
+    for i, child in ipairs(siblings) do
+        if child == obj then
+            return i
+        end
+    end
+    return nil
+end
+
+local function HasDuplicateNameInParent(obj)
+    if not obj or not obj.Parent then return false end
+    
+    local count = 0
+    for _, child in ipairs(obj.Parent:GetChildren()) do
+        if child.Name == obj.Name then
+            count = count + 1
+            if count > 1 then
+                return true
+            end
+        end
+    end
+    return false
 end
 
 local function ObjectToPath(Object)
@@ -494,8 +515,20 @@ local function ObjectToPath(Object)
         return nil
     end
     
-    local Path = WrapName(Object.Name)
+    local Path = ""
     local Current = Object
+    local needsDot = true
+    
+    if string.match(Current.Name, '[\'\"%[%]]') or HasDuplicateNameInParent(Current) then
+        local index = GetIndexInParent(Current)
+        Path = string.format(":GetChildren()[%d]", index)
+        needsDot = false
+    elseif NeedsWrapping(Current.Name) then
+        Path = WrapName(Current.Name)
+        needsDot = false
+    else
+        Path = Current.Name
+    end
     
     if IsService(Object) then
         return string.format('game:GetService("%s")', Object.ClassName)
@@ -505,14 +538,30 @@ local function ObjectToPath(Object)
         Current = Current.Parent
         
         if IsService(Current) then
-            return string.format('game:GetService("%s").%s', Current.ClassName, Path)
+            local connectorDot = needsDot and "." or ""
+            return string.format('game:GetService("%s")%s%s', Current.ClassName, connectorDot, Path)
         end
         
-        Path = WrapName(Current.Name) .. "." .. Path
+        local prefix = ""
+        if string.match(Current.Name, '[\'\"%[%]]') or HasDuplicateNameInParent(Current) then
+            local index = GetIndexInParent(Current)
+            prefix = string.format(":GetChildren()[%d]", index)
+            needsDot = false
+        elseif NeedsWrapping(Current.Name) then
+            prefix = WrapName(Current.Name)
+            needsDot = false
+        else
+            prefix = Current.Name
+            if needsDot then
+                prefix = "." .. prefix
+            end
+            needsDot = true
+        end
+        Path = prefix .. Path
     end
     
     if Current.Parent == game then
-        Path = "game." .. Path
+        Path = "game" .. (needsDot and "." or "") .. Path
     end
     
     return Path
