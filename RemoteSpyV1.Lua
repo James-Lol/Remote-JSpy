@@ -5,7 +5,7 @@ local CurrentCode = nil
 
 local ScreenGui = Instance.new("ScreenGui")
 ScreenGui.DisplayOrder = 2147483647
-ScreenGui.ResetOnSpawn = false
+ScreenGui.ResetOnSpawn = true
 ScreenGui.IgnoreGuiInset = true
 ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 
