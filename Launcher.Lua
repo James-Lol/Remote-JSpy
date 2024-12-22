@@ -5,3 +5,7 @@ end
 game:GetService("ReplicatedStorage"):SetAttribute("RemoteJSpy", true)
 
 loadstring(game:HttpGet("https://raw.githubusercontent.com/James-Lol/Remote-JSpy/refs/heads/main/RemoteSpyV1.Lua"))()
+
+game:GetService("Player").LocalPlayer.CharacterAdded:Connect(function()
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/James-Lol/Remote-JSpy/refs/heads/main/RemoteSpyV1.Lua"))()
+end)
