@@ -471,7 +471,15 @@ local function IsService(Object)
 end
 
 local function NeedsWrapping(str)
-    return string.match(str, "[^%w]") ~= nil or string.match(str, "_") ~= nil
+    if string.match(str, "^%d") then
+        return true
+    end
+    
+    if string.match(str, "[^%w]") or string.match(str, "_") then
+        return true
+    end
+    
+    return false
 end
 
 local function WrapName(name)
