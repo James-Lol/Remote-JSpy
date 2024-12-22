@@ -470,12 +470,23 @@ local function IsService(Object)
     end
 end
 
+local function NeedsWrapping(str)
+    return string.match(str, "[^%w]") ~= nil or string.match(str, "_") ~= nil
+end
+
+local function WrapName(name)
+    if NeedsWrapping(name) then
+        return string.format('[""%s""]', name)
+    end
+    return name
+end
+
 local function ObjectToPath(Object)
     if not Object then
         return nil
     end
     
-    local Path = Object.Name
+    local Path = WrapName(Object.Name)
     local Current = Object
     
     if IsService(Object) then
@@ -489,7 +500,7 @@ local function ObjectToPath(Object)
             return string.format('game:GetService("%s").%s', Current.ClassName, Path)
         end
         
-        Path = Current.Name .. "." .. Path
+        Path = WrapName(Current.Name) .. "." .. Path
     end
     
     if Current.Parent == game then
