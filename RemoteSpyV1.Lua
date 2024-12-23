@@ -3,6 +3,8 @@ local Channels = {}
 local CurrentRemote = nil
 local CurrentCode = nil
 
+print("e")
+
 local ScreenGui = Instance.new("ScreenGui")
 ScreenGui.DisplayOrder = 2147483647
 ScreenGui.ResetOnSpawn = false
