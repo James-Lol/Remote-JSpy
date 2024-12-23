@@ -510,61 +510,52 @@ local function HasDuplicateNameInParent(obj)
     return false
 end
 
+local function IsService(obj)
+    for _, service in ipairs(game:GetChildren()) do
+        if service == obj then
+            return true
+        end
+    end
+    return false
+end
+
 local function ObjectToPath(Object)
-    if not Object then
+    if not Object then return nil end
+    
+    local path = {}
+    local current = Object
+    
+    while current and current ~= game do
+        if IsService(current) then
+            table.insert(path, 1, string.format('game:GetService("%s")', current.ClassName))
+            break
+        else
+            if HasDuplicateNameInParent(current) then
+                local index = GetIndexInParent(current)
+                table.insert(path, 1, string.format(':GetChildren()[%d]', index))
+            elseif NeedsWrapping(current.Name) then
+                table.insert(path, 1, WrapName(current.Name))
+            else
+                table.insert(path, 1, current.Name)
+            end
+        end
+        current = current.Parent
+    end
+    
+    if #path == 0 then
         return nil
     end
     
-    local Path = ""
-    local Current = Object
-    local needsDot = true
-    
-    if string.match(Current.Name, '[\'\"%[%]]') or HasDuplicateNameInParent(Current) then
-        local index = GetIndexInParent(Current)
-        Path = string.format(":GetChildren()[%d]", index)
-        needsDot = false
-    elseif NeedsWrapping(Current.Name) then
-        Path = WrapName(Current.Name)
-        needsDot = false
-    else
-        Path = Current.Name
-    end
-    
-    if IsService(Object) then
-        return string.format('game:GetService("%s")', Object.ClassName)
-    end
-    
-    while Current.Parent and Current.Parent ~= game do
-        Current = Current.Parent
-        
-        if IsService(Current) then
-            local connectorDot = needsDot and "." or ""
-            return string.format('game:GetService("%s")%s%s', Current.ClassName, connectorDot, Path)
-        end
-        
-        local prefix = ""
-        if string.match(Current.Name, '[\'\"%[%]]') or HasDuplicateNameInParent(Current) then
-            local index = GetIndexInParent(Current)
-            prefix = string.format(":GetChildren()[%d]", index)
-            needsDot = false
-        elseif NeedsWrapping(Current.Name) then
-            prefix = WrapName(Current.Name)
-            needsDot = false
+    local result = path[1]
+    for i = 2, #path do
+        if path[i]:match("^:") then
+            result = result .. path[i]
         else
-            prefix = Current.Name
-            if needsDot then
-                prefix = "." .. prefix
-            end
-            needsDot = true
+            result = result .. "." .. path[i]
         end
-        Path = prefix .. Path
     end
     
-    if Current.Parent == game then
-        Path = "game" .. (needsDot and "." or "") .. Path
-    end
-    
-    return Path
+    return result
 end
 
 local function GenerateCode(Remote, Args, Method)
